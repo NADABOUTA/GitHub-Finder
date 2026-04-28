@@ -1,4 +1,7 @@
-
+/* ───────────────────────────────────────────────
+       VARIABLES CSS : les couleurs de l'appli
+       On les définit ici pour les réutiliser partout
+    ─────────────────────────────────────────────── */
     :root {
       --bg:        #0a0a0f;
       --surface:   #12121a;
@@ -14,7 +17,7 @@
       --transition: 0.2s ease;
     }
 
-    /* Reset */
+    /* Reset basique */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -62,7 +65,7 @@
     .nav-btn:hover  { border-color: var(--accent); color: var(--accent); }
     .nav-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.07); }
 
-    /* Badge  */
+    /* Badge rouge avec le nombre de favoris */
     .badge {
       background: var(--accent2);
       color: #fff;
@@ -75,3 +78,311 @@
     }
     .badge.hidden { display: none; }
 
+    /* ── Zone principale ── */
+    main {
+      flex: 1;
+      max-width: 820px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── Barre de recherche ── */
+    .search-wrapper {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+    }
+
+    #searchInput {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      padding: 0.85rem 1.2rem;
+      transition: var(--transition);
+      outline: none;
+    }
+    #searchInput::placeholder { color: var(--muted); }
+    #searchInput:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,229,255,0.1); }
+
+    #searchBtn {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.85rem 1.6rem;
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+    }
+    #searchBtn:hover  { background: #33ecff; transform: translateY(-1px); }
+    #searchBtn:active { transform: translateY(0); }
+
+    /* ── Sections : cachées par défaut, visible avec .active ── */
+    .section        { display: none; }
+    .section.active { display: block; }
+
+    /* ── Écran de bienvenue ── */
+    #welcomeSection { text-align: center; padding: 4rem 1rem; }
+
+    .welcome-icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      display: block;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    #welcomeSection h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin-bottom: 0.75rem;
+      line-height: 1.1;
+    }
+    #welcomeSection h1 em { color: var(--accent); font-style: normal; }
+
+    #welcomeSection p {
+      color: var(--muted);
+      max-width: 480px;
+      margin: 0 auto 2rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .tips { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
+    .tip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1.2rem;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      max-width: 200px;
+      text-align: left;
+    }
+    .tip strong { color: var(--accent); display: block; margin-bottom: 0.3rem; font-size: 0.82rem; }
+
+    /* ── Chargement ── */
+    #loadingSection { text-align: center; padding: 4rem 1rem; }
+
+    .loader {
+      display: inline-block;
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 1.5rem;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loadingSection p { font-family: var(--mono); font-size: 0.85rem; color: var(--muted); }
+
+    /* ── Erreur ── */
+    #errorSection { text-align: center; padding: 3rem 1rem; }
+
+    .error-box {
+      display: inline-block;
+      background: rgba(255,60,110,0.08);
+      border: 1.5px solid rgba(255,60,110,0.3);
+      border-radius: var(--radius);
+      padding: 2rem 2.5rem;
+    }
+    .error-icon { font-size: 2.5rem; margin-bottom: 0.75rem; display: block; }
+    .error-box h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--accent2); }
+    .error-box p  { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); }
+
+    /* ── Carte profil ── */
+    .profile-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Ligne colorée en haut de la carte */
+    .profile-card::before {
+      content: '';
+      position: absolute;
+      top: 0; 
+      left: 0; 
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .profile-header {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+    }
+
+    .profile-avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid var(--border);
+      flex-shrink: 0;
+      object-fit: cover;
+    }
+
+    .profile-info { flex: 1; min-width: 0; }
+
+    .profile-name     { 
+        font-size: 1.4rem; 
+        font-weight: 800; 
+        letter-spacing: -0.03em; 
+        margin-bottom: 0.1rem; 
+    }
+    .profile-login    { 
+        font-family: var(--mono); 
+        font-size: 0.82rem; 
+        color: var(--accent); 
+        margin-bottom: 0.6rem; }
+    .profile-bio      { font-family: var(--mono); font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+    .profile-location { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; }
+    .profile-location::before { content: '📍 '; }
+
+    .profile-actions { display: flex; gap: 0.75rem; align-items: center; flex-shrink: 0; }
+
+    .btn-github {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-github:hover { border-color: var(--text); color: var(--text); }
+
+    .btn-bookmark {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1.5px solid var(--accent2);
+      background: transparent;
+      color: var(--accent2);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-bookmark:hover { background: var(--accent2); color: #fff; }
+    .btn-bookmark.saved { background: var(--accent2); color: #fff; }
+
+    /* ── Stats (repos, followers, following) ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    .stat-card  { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; text-align: center; }
+    .stat-value { font-size: 1.5rem; font-weight: 800; display: block; font-family: var(--mono); }
+    .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; }
+
+    /* ── Liste des favoris ── */
+    .bookmarks-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.5rem; }
+    .bookmarks-header h2 { font-size: 1.2rem; font-weight: 800; }
+    .bookmarks-count     { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); }
+
+    .bookmarks-empty {
+      text-align: center;
+      padding: 3rem 1rem;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .bookmarks-empty span { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+
+    .bookmarks-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .bookmark-item {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+    .bookmark-item:hover { border-color: var(--accent); }
+
+    .bookmark-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .bookmark-info   { flex: 1; min-width: 0; }
+    .bookmark-name   { font-weight: 600; font-size: 0.95rem; }
+    .bookmark-login  { font-family: var(--mono); font-size: 0.75rem; color: var(--accent); }
+
+    .bookmark-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+
+    .btn-load {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-load:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-remove {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      border: 1.5px solid rgba(255,60,110,0.3);
+      background: transparent;
+      color: var(--accent2);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-remove:hover { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 1.2rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── Responsive mobile ── */
+    @media (max-width: 600px) {
+      header { padding: 1rem; }
+      main { padding: 1.5rem 1rem 3rem; }
+      .profile-header { flex-direction: column; align-items: center; text-align: center; }
+      .profile-actions { justify-content: center; }
+      .stat-value { font-size: 1.1rem; }
+    }
