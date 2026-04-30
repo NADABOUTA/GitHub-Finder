@@ -1,84 +1,156 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Finder</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet" />
 </head>
 <body>
-    <div class="logo">Dev<span>Hunt</span></div>
-    <nav>
-      <button class="nav-btn active" id="btnSearch" onclick="allerVersSearch()">
-         Search
-      </button>
-      <button class="nav-btn" id="btnFavoris" onclick="allerVersFavoris()">
-        Saved
-        <span class="badge hidden" id="badge">0</span>
-      </button>
-    </nav>
-  </header>
 
-  <!--MAIN -->
-  <main>
-
-    <!-- Barre de recherche (toujours visible sauf favoris) -->
-    <div class="search-wrapper" id="searchBar">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Enter a GitHub username…"
-        aria-label="GitHub username"
-        autocomplete="off"
-      />
-      <button id="searchBtn" onclick="lancerRecherche()">SEARCH</button>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="nav-logo">
+      <span class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+        </svg>
+      </span>
+      <span class="logo-text">GitFinder</span>
     </div>
+    <button class="btn-bookmarks" id="bookmarksToggleBtn" aria-label="Voir les favoris">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+      </svg>
+      <span>Favoris</span>
+      <span class="bookmark-count" id="bookmarkCount">0</span>
+    </button>
+  </nav>
 
-    <!-- SECTION 1 : Bienvenue  -->
-    <div class="section active" id="welcomeSection">
-      <h1>Discover <em>developer</em> profiles</h1>
-      <p>Search any GitHub username to explore their public stats, repos, and save the best ones for later.</p>
-      <div class="tips">
-        <div class="tip"><strong> Fast Search</strong>Type a username and hit SEARCH</div>
-        <div class="tip"><strong> Save Profiles</strong>Bookmark candidates in one click</div>
-        <div class="tip"><strong> Private</strong>Favorites stored locally in your browser</div>
+  <!-- ===== SEARCH BAR ===== -->
+  <section class="search-section">
+    <div class="search-wrapper">
+      <div class="search-box">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Rechercher un profil GitHub..."
+          aria-label="Nom d'utilisateur GitHub"
+          autocomplete="off"
+        />
+        <button class="btn-search" id="searchBtn" aria-label="Lancer la recherche">
+          Rechercher
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+
+    <!-- STATE: Welcome -->
+    <div class="state" id="welcomeState">
+      <div class="welcome-card">
+        <div class="welcome-icon">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/>
+          </svg>
+        </div>
+        <h2>Découvrez des profils GitHub</h2>
+        <p>Tapez un nom d'utilisateur GitHub pour voir son profil, ses statistiques et ses repositories.</p>
+        <div class="suggestions">
+          <span class="suggestion-label">Essayez :</span>
+          <button class="suggestion-chip" data-user="torvalds">torvalds</button>
+          <button class="suggestion-chip" data-user="gvanrossum">gvanrossum</button>
+          <button class="suggestion-chip" data-user="github">github</button>
+        </div>
       </div>
     </div>
 
-    <!-- SECTION 2 : Chargement -->
-    <div class="section" id="loadingSection">
-      <div class="loader"></div>
-      <p>Fetching profile…</p>
-    </div>
-
-    <!-- SECTION 3 : Erreur -->
-    <div class="section" id="errorSection">
-      <div class="error-box">
-        <span class="error-icon">⚠️</span>
-        <h2>Oops!</h2>
-        <p id="errorMessage">Something went wrong.</p>
+    <!-- STATE: Loading -->
+    <div class="state hidden" id="loadingState">
+      <div class="loader-wrapper">
+        <div class="loader-ring"></div>
+        <p class="loader-text">Recherche en cours...</p>
       </div>
     </div>
 
-    <!-- SECTION 4 : Résultats -->
-    <div class="section" id="resultsSection">
-      <div class="profile-card" id="profileCard"></div>
+    <!-- STATE: Error -->
+    <div class="state hidden" id="errorState">
+      <div class="error-card">
+        <div class="error-icon">✕</div>
+        <h3 id="errorMessage">Utilisateur non trouvé</h3>
+        <p>Vérifiez l'orthographe du nom d'utilisateur et réessayez.</p>
+        <button class="btn-retry" id="retryBtn">Nouvelle recherche</button>
+      </div>
     </div>
 
-    <!-- SECTION 5 : Favoris -->
-    <div class="section" id="favSection">
+    <!-- STATE: Results -->
+    <div class="state hidden" id="resultsState">
+      <!-- Profil Card -->
+      <div class="profile-card" id="userProfile">
+        <div class="profile-header">
+          <img id="userAvatar" src="" alt="Avatar" class="avatar" />
+          <div class="profile-info">
+            <h2 id="userName" class="user-name">—</h2>
+            <a id="userLogin" href="#" target="_blank" class="user-login">@—</a>
+            <p id="userBio" class="user-bio"></p>
+            <p id="userLocation" class="user-location"></p>
+          </div>
+          <button class="btn-bookmark" id="bookmarkBtn" aria-label="Ajouter aux favoris">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span id="bookmarkBtnText">Ajouter</span>
+          </button>
+        </div>
+        <div class="stats-row">
+          <div class="stat">
+            <span class="stat-value" id="userFollowers">0</span>
+            <span class="stat-label">Followers</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="userFollowing">0</span>
+            <span class="stat-label">Following</span>
+          </div>
+          <div class="stat">
+            <span class="stat-value" id="userRepos">0</span>
+            <span class="stat-label">Repos</span>
+          </div>
+        </div>
+        <a id="userGithubLink" href="#" target="_blank" class="btn-github">
+          Voir sur GitHub →
+        </a>
+      </div>
+
+      <!-- Repos List -->
+      <div class="repos-section">
+        <h3 class="repos-title">Repositories populaires</h3>
+        <div class="repos-list" id="reposList"></div>
+      </div>
+    </div>
+
+    <!-- STATE: Bookmarks -->
+    <div class="state hidden" id="bookmarksState">
       <div class="bookmarks-header">
-        <h2>Saved Profiles</h2>
-        <span class="bookmarks-count" id="favCount">0 profiles</span>
+        <h2>Mes Favoris</h2>
+        <span class="total-label" id="totalBookmarks">0 profil(s)</span>
       </div>
-      <div id="favListe"></div>
+      <div class="bookmarks-list" id="bookmarksList"></div>
+      <div class="empty-bookmarks hidden" id="emptyBookmarks">
+        <p>Aucun favori sauvegardé.</p>
+        <p>Recherchez un profil et ajoutez-le à vos favoris.</p>
+      </div>
     </div>
 
   </main>
 
-  <footer>DevHunt · GitHub Profile Explorer · Data via api.github.com</footer>
-  
-    <title>Document</title>
-    <script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
