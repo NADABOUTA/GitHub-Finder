@@ -38,3 +38,59 @@ var bookmarksList      = document.getElementById("bookmarksList");
 var totalBookmarks     = document.getElementById("totalBookmarks");
 var emptyBookmarks     = document.getElementById("emptyBookmarks");
 var bookmarksToggleBtn = document.getElementById("bookmarksToggleBtn");
+
+
+// ==================== UI STATE FUNCTIONS ====================
+
+
+// Cache toutes les sections
+function hideAllStates() {
+  welcomeState.classList.add("hidden");
+  loadingState.classList.add("hidden");
+  errorState.classList.add("hidden");
+  resultsState.classList.add("hidden");
+  bookmarksState.classList.add("hidden");
+}
+
+// Affiche l'écran d'accueil
+function showWelcome() {
+  hideAllStates();
+  welcomeState.classList.remove("hidden");
+  state.isViewingBookmarks = false;
+}
+
+// Affiche le loader (pendant la requête API)
+function showLoading() {
+  hideAllStates();
+  loadingState.classList.remove("hidden");
+}
+
+// Affiche un message d'erreur
+function showError(message) {
+  hideAllStates();
+  errorState.classList.remove("hidden");
+  errorMessage.textContent = message;
+}
+
+// Affiche les résultats (profil + repos)
+function showResults() {
+  hideAllStates();
+  resultsState.classList.remove("hidden");
+  state.isViewingBookmarks = false;
+}
+
+// Affiche la liste des favoris
+function showBookmarks() {
+  hideAllStates();
+  bookmarksState.classList.remove("hidden");
+  state.isViewingBookmarks = true;
+  renderBookmarksList();
+}
+
+// Formate un nombre 
+function formatNumber(number) {
+  if (number >= 1000) {
+    return (number / 1000).toFixed(1) + "k";
+  }
+  return number;
+}
