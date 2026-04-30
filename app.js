@@ -213,7 +213,7 @@ function getLanguageColor(language) {
   return "#8b949e"; // couleur par défaut
 }
 
-// ==================== COMMIT 5 : BOOKMARKS LOGIC ====================
+// ==================== BOOKMARKS LOGIC ====================
 // Tout ce qui concerne les favoris : ajout, suppression, affichage
 
 // Charge les favoris depuis localStorage au démarrage
@@ -359,4 +359,140 @@ function renderBookmarksList() {
     });
   }
 }
+
+
+// ==================== API FUNCTIONS ====================
+// Les requêtes vers l'API GitHub 
+
+// Récupère les données d'un utilisateur GitHub
+async function fetchUser(username) {
+  // Hkki s7i7 b backticks
+var response = await fetch("https://api.github.com/users/" + username, {
+  headers: {
+    Authorization: `token ${env.token}`
+  }
+});
+  // On vérifie le code de statut HTTP de la réponse
+  if (response.status === 404) {
+    throw new Error("Utilisateur \"" + username + "\" non trouvé");
+  }
+
+  if (response.status === 403) {
+    throw new Error("Limite API atteinte. Réessayez dans quelques minutes.");
+  }
+
+  if (!response.ok) {
+    throw new Error("Une erreur inattendue est survenue.");
+  }
+
+  // Convertit la réponse en objet JavaScript
+  var data = await response.json();
+  return data;
+}
+
+// Récupère les repositories d'un utilisateur
+async function fetchUserRepos(username) {
+  var response = await fetch(
+    "https://api.github.com/users/" + username + "/repos?sort=stars&per_page=6"
+  );
+
+  if (response.status === 403) {
+    throw new Error("Limite API atteinte.");
+  }
+
+  if (!response.ok) {
+    throw new Error("Impossible de récupérer les repositories.");
+  }
+
+  var data = await response.json();
+  return data;
+}
+
+// Fonction principale : cherche un utilisateur et affiche son profil
+async function searchUser(username) {
+
+  // Supprime les espaces au début et à la fin
+  var trimmed = username.trim();
+
+  // Si le champ est vide, on ne fait rien
+  if (trimmed === "") return;
+
+  // Affiche le loader
+  showLoading();
+
+  try {
+    // Requête 1 : le profil
+    var user = await fetchUser(trimmed);
+    state.currentUser = user;
+
+    // Requête 2 : les repositories
+    var repos = await fetchUserRepos(trimmed);
+
+    // Affichage
+    displayUserProfile(user);
+    displayRepositories(repos);
+
+  } catch (error) {
+    // En cas d'erreur, on affiche le message
+    showError(error.message);
+  }
+}
+
+
+// ==================== EVENT LISTENERS + INIT ====================
+// Les événements : que se passe-t-il quand l'utilisateur clique / tape ?
+
+// Clic sur le bouton "Rechercher"
+searchBtn.addEventListener("click", function() {
+  searchUser(searchInput.value);
+});
+
+// Appui sur la touche Entrée dans le champ
+searchInput.addEventListener("keypress", function(event) {
+  if (event.key === "Enter") {
+    searchUser(searchInput.value);
+  }
+});
+
+// Clic sur "Favoris" dans la navbar
+bookmarksToggleBtn.addEventListener("click", function() {
+  if (state.isViewingBookmarks) {
+    // Si on est déjà sur les favoris → retour aux résultats ou accueil
+    if (state.currentUser) {
+      showResults();
+    } else {
+      showWelcome();
+    }
+  } else {
+    showBookmarks();
+  }
+});
+
+// Clic sur le bouton "Ajouter / Sauvegardé"
+bookmarkBtn.addEventListener("click", function() {
+  toggleBookmark();
+});
+
+// Bouton "Nouvelle recherche" sur l'écran d'erreur
+document.getElementById("retryBtn").addEventListener("click", function() {
+  showWelcome();
+  searchInput.value = "";
+  searchInput.focus();
+});
+
+// Les chips de suggestion (torvalds, gvanrossum, github)
+var chips = document.querySelectorAll(".suggestion-chip");
+for (var i = 0; i < chips.length; i++) {
+  chips[i].addEventListener("click", function() {
+    var user = this.getAttribute("data-user");
+    searchInput.value = user;
+    searchUser(user);
+  });
+}
+
+
+// ==================== INITIALISATION ====================
+
+loadBookmarksFromStorage();
+showWelcome();
 
