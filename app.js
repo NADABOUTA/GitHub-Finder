@@ -213,3 +213,150 @@ function getLanguageColor(language) {
   return "#8b949e"; // couleur par défaut
 }
 
+// ==================== COMMIT 5 : BOOKMARKS LOGIC ====================
+// Tout ce qui concerne les favoris : ajout, suppression, affichage
+
+// Charge les favoris depuis localStorage au démarrage
+function loadBookmarksFromStorage() {
+  var saved = localStorage.getItem("github_finder_bookmarks");
+
+  // Si des favoris existent (saved n'est pas null)
+  if (saved) {
+    // JSON.parse convertit le texte en tableau JavaScript
+    state.bookmarks = JSON.parse(saved);
+  }
+
+  updateBookmarkCount();
+}
+
+// Sauvegarde les favoris dans localStorage
+function saveBookmarksToStorage() {
+  // JSON.stringify convertit le tableau en texte pour le stocker
+  localStorage.setItem("github_finder_bookmarks", JSON.stringify(state.bookmarks));
+}
+
+// Met à jour le compteur affiché dans la navbar
+function updateBookmarkCount() {
+  var count = state.bookmarks.length;
+  bookmarkCount.textContent  = count;
+  totalBookmarks.textContent = count + " profil(s)";
+}
+
+// Vérifie si un utilisateur est déjà dans les favoris
+function isBookmarked(login) {
+  for (var i = 0; i < state.bookmarks.length; i++) {
+    if (state.bookmarks[i].login === login) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Ajoute un utilisateur aux favoris
+function addBookmark(user) {
+  var bookmark = {
+    id:         user.id,
+    login:      user.login,
+    name:       user.name || user.login,
+    avatar_url: user.avatar_url
+  };
+
+  state.bookmarks.push(bookmark);
+  saveBookmarksToStorage();
+  updateBookmarkCount();
+}
+
+// Supprime un utilisateur des favoris
+function removeBookmark(login) {
+  var newBookmarks = [];
+
+  // On recopie tous les favoris SAUF celui qu'on veut supprimer
+  for (var i = 0; i < state.bookmarks.length; i++) {
+    if (state.bookmarks[i].login !== login) {
+      newBookmarks.push(state.bookmarks[i]);
+    }
+  }
+
+  state.bookmarks = newBookmarks;
+  saveBookmarksToStorage();
+  updateBookmarkCount();
+}
+
+// Ajoute ou supprime un favori selon l'état actuel
+function toggleBookmark() {
+  if (!state.currentUser) return;
+
+  if (isBookmarked(state.currentUser.login)) {
+    removeBookmark(state.currentUser.login);
+  } else {
+    addBookmark(state.currentUser);
+  }
+
+  updateBookmarkButton(state.currentUser.login);
+}
+
+// Change l'apparence du bouton favori
+function updateBookmarkButton(login) {
+  if (isBookmarked(login)) {
+    bookmarkBtn.classList.add("active");
+    bookmarkBtnText.textContent = "Sauvegardé";
+  } else {
+    bookmarkBtn.classList.remove("active");
+    bookmarkBtnText.textContent = "Ajouter";
+  }
+}
+
+// Affiche la liste des favoris dans la page
+function renderBookmarksList() {
+  bookmarksList.innerHTML = "";
+
+  // Si aucun favori, on affiche le message vide
+  if (state.bookmarks.length === 0) {
+    emptyBookmarks.classList.remove("hidden");
+    return;
+  }
+
+  emptyBookmarks.classList.add("hidden");
+
+  // On crée une carte pour chaque favori
+  for (var i = 0; i < state.bookmarks.length; i++) {
+    var bookmark = state.bookmarks[i];
+
+    var item = document.createElement("div");
+    item.className = "bookmark-item";
+
+    item.innerHTML =
+      "<img class='bookmark-avatar' src='" + bookmark.avatar_url + "' alt='Avatar de " + bookmark.login + "' />" +
+      "<div class='bookmark-info'>" +
+        "<div class='bookmark-name'>" + bookmark.name + "</div>" +
+        "<div class='bookmark-login'>@" + bookmark.login + "</div>" +
+      "</div>" +
+      "<div class='bookmark-actions'>" +
+        "<button class='btn-load' data-login='" + bookmark.login + "'>Voir</button>" +
+        "<button class='btn-remove' data-login='" + bookmark.login + "'>✕</button>" +
+      "</div>";
+
+    bookmarksList.appendChild(item);
+  }
+
+  // Ajoute les événements sur les boutons "Voir" et "✕"
+  var loadButtons   = document.querySelectorAll(".btn-load");
+  var removeButtons = document.querySelectorAll(".btn-remove");
+
+  for (var j = 0; j < loadButtons.length; j++) {
+    loadButtons[j].addEventListener("click", function() {
+      var login = this.getAttribute("data-login");
+      searchInput.value = login;
+      searchUser(login);
+    });
+  }
+
+  for (var k = 0; k < removeButtons.length; k++) {
+    removeButtons[k].addEventListener("click", function() {
+      var login = this.getAttribute("data-login");
+      removeBookmark(login);
+      renderBookmarksList();
+    });
+  }
+}
+
