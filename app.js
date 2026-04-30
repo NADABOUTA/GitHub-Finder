@@ -94,3 +94,122 @@ function formatNumber(number) {
   }
   return number;
 }
+
+
+// ==================== DISPLAY FUNCTIONS ====================
+// Ces fonctions mettent les données dans la page HTML
+
+// Affiche le profil d'un utilisateur
+function displayUserProfile(user) {
+
+  // On met chaque donnée dans l'élément HTML correspondant
+  userAvatar.src = user.avatar_url;
+  userAvatar.alt = "Avatar de " + user.login;
+
+  // Si l'utilisateur a un nom → on l'affiche, sinon on affiche le login
+  if (user.name) {
+    userName.textContent = user.name;
+  } else {
+    userName.textContent = user.login;
+  }
+
+  userLogin.textContent = "@" + user.login;
+  userLogin.href        = user.html_url;
+
+  // Si pas de bio, on met une chaîne vide (rien n'apparaît)
+  if (user.bio) {
+    userBio.textContent = user.bio;
+  } else {
+    userBio.textContent = "";
+  }
+
+  // Pareil pour la localisation
+  if (user.location) {
+    userLocation.textContent = user.location;
+  } else {
+    userLocation.textContent = "";
+  }
+
+  // Les statistiques
+  userFollowers.textContent = formatNumber(user.followers);
+  userFollowing.textContent = formatNumber(user.following);
+  userRepos.textContent     = user.public_repos;
+
+  // Le lien vers GitHub
+  userGithubLink.href = user.html_url;
+
+  // Met à jour le bouton favori
+  updateBookmarkButton(user.login);
+
+  // Affiche la section résultats
+  showResults();
+}
+
+// Affiche la liste des repositories
+function displayRepositories(repos) {
+
+  // On vide d'abord la liste
+  reposList.innerHTML = "";
+
+  // Si aucun repo
+  if (repos.length === 0) {
+    reposList.innerHTML = "<p style='color:#8b949e;font-size:0.85rem;'>Aucun repository public.</p>";
+    return;
+  }
+
+  // Pour chaque repo, on crée une carte HTML
+  for (var i = 0; i < repos.length; i++) {
+    var repo = repos[i];
+
+    // Crée (lien cliquable)
+    var card = document.createElement("a");
+    card.href      = repo.html_url;
+    card.target    = "_blank";
+    card.className = "repo-card";
+
+    // Description : si elle existe on la met, sinon rien
+    var descriptionHTML = "";
+    if (repo.description) {
+      descriptionHTML = "<div class='repo-desc'>" + repo.description + "</div>";
+    }
+
+    // Langage : si renseigné on l'affiche
+    var languageHTML = "";
+    if (repo.language) {
+      var color = getLanguageColor(repo.language);
+      languageHTML = "<span class='repo-badge'><span class='lang-dot' style='background:" + color + "'></span>" + repo.language + "</span>";
+    }
+
+    // On construit le contenu HTML de la carte
+    card.innerHTML =
+      "<div class='repo-name'>" + repo.name + "</div>" +
+      descriptionHTML +
+      "<div class='repo-meta'>" +
+        languageHTML +
+        "<span class='repo-badge'>⭐ " + formatNumber(repo.stargazers_count) + "</span>" +
+        "<span class='repo-badge'>🍴 " + formatNumber(repo.forks_count) + "</span>" +
+      "</div>";
+
+    // Ajoute la carte dans la liste
+    reposList.appendChild(card);
+  }
+}
+
+// Retourne une couleur selon le langage
+function getLanguageColor(language) {
+  if (language === "JavaScript") return "#f1e05a";
+  if (language === "TypeScript") return "#3178c6";
+  if (language === "Python")     return "#3572A5";
+  if (language === "Java")       return "#b07219";
+  if (language === "C")          return "#555555";
+  if (language === "C++")        return "#f34b7d";
+  if (language === "Go")         return "#00ADD8";
+  if (language === "Rust")       return "#dea584";
+  if (language === "Ruby")       return "#701516";
+  if (language === "PHP")        return "#4F5D95";
+  if (language === "CSS")        return "#563d7c";
+  if (language === "HTML")       return "#e34c26";
+  if (language === "Shell")      return "#89e051";
+  return "#8b949e"; // couleur par défaut
+}
+
