@@ -2,7 +2,7 @@
 :root {
   --bg-primary: #0d1117;
   --bg-secondary: #161b22;
-  --bg-card: #1c2333;
+  --bg-card: #124eda;
   --bg-card-hover: #21262d;
   --border: #30363d;
   --border-accent: #388bfd;
@@ -11,11 +11,11 @@
   --text-secondary: #8b949e;
   --text-muted: #6e7681;
 
-  --accent: #388bfd;
+  --accent: #b300009a;
   --accent-hover: #58a6ff;
-  --accent-glow: rgba(56, 139, 253, 0.15);
+  --accent-glow: rgba(255, 255, 255, 0.37);
 
-  --success: #3fb950;
+  --success: #b300009a;
   --danger: #f85149;
   --warning: #d29922;
 
@@ -240,37 +240,6 @@ body {
   color: var(--text-secondary);
   font-size: 0.95rem;
   margin-bottom: 2rem;
-}
-
-.suggestions {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-.suggestion-label {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-family: var(--font-mono);
-}
-
-.suggestion-chip {
-  padding: 0.35rem 0.9rem;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-full);
-  color: var(--accent);
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.suggestion-chip:hover {
-  background: var(--accent-glow);
-  border-color: var(--accent);
 }
 
 /* ==================== LOADING STATE ==================== */
@@ -646,7 +615,7 @@ body {
 .bookmark-login {
   font-family: var(--font-mono);
   font-size: 0.78rem;
-  color: var(--accent);
+  color: white;
 }
 
 .bookmark-actions {
@@ -657,7 +626,7 @@ body {
 
 .btn-load {
   padding: 0.4rem 0.9rem;
-  background: var(--accent-glow);
+  background:rgb(161, 161, 138);
   border: 1px solid var(--accent);
   color: var(--accent);
   border-radius: var(--radius-full);
