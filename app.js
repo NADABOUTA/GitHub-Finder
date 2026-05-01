@@ -121,56 +121,74 @@ function showWelcome() {
     document.getElementById('resultsState').classList.add('hidden');
     welcomeState.classList.remove('hidden');
 }
-
 // ==================== API FUNCTIONS ====================
 
-function searchUserLocal(username) {
-    // Afficher le loader
-    showLoading();
-
-    // Simuler un délai réseau
-    setTimeout(() => {
-        // Chercher l'user dans testUsers
-        const user = testUsers.find((u) => u.login === username);
-
-        if (user) {
-            // Sauvegarder dans state
-            state.currentUser = user;
-
-            // Afficher le profil
-            displayUserProfile(user);
-
-            // Afficher les repos de test
-            displayRepositories(testRepos);
-        } else {
-            showError("Utilisateur non trouvé");
+async function fetchUser(username) {
+    try {
+        showLoading();
+        
+        const response = await fetch(`https://api.github.com/users/${username}`);
+        
+        if (response.status === 404) {
+            throw new Error(`User "@${username}" not found`);
+        } else if (response.status === 403) {
+            throw new Error('Rate limit reached. Try again later.');
+        } else if (!response.ok) {
+            throw new Error('Unexpected error occurred');
         }
-    }, 1000);
+        
+        const user = await response.json();
+        state.currentUser = user;
+        displayUserProfile(user);
+        
+        // Fetch repos aussi
+        fetchUserRepos(username);
+        
+    } catch (error) {
+        showError(error.message);
+    }
 }
-// ==================== EVENT LISTENERS ====================
+// ==// ==================== EVENT LISTENERS ====================
 
-// Clic sur le bouton recherche
 searchBtn.addEventListener('click', () => {
     const username = searchInput.value.trim();
     if (username !== "") {
-        searchUserLocal(username);
+        fetchUser(username);
     } else {
         showError("Veuillez entrer un nom d'utilisateur");
     }
 });
 
-// Entrée avec la touche Entrée
 searchInput.addEventListener('keypress', (e) => {
     if (e.key === "Enter") {
         const username = searchInput.value.trim();
         if (username !== "") {
-            searchUserLocal(username);
+            fetchUser(username);
         } else {
             showError("Veuillez entrer un nom d'utilisateur");
         }
     }
 });
+///////// ==================== REPOS FUNCTIONS ====================
+async function fetchUserRepos(username) {
+    try {
+        const response = await fetch(
+            `https://api.github.com/users/${username}/repos?sort=stars&per_page=5`
+        );
+        
+        if (!response.ok) {
+            throw new Error('Could not fetch repositories');
+        }
+        
+        const repos = await response.json();
+        displayRepositories(repos);
+        
+    } catch (error) {
+        reposList.innerHTML = `<p style="color: var(--danger)">Could not load repos</p>`;
+    }
+}
 
 // ==================== INITIALIZE ====================
 
 showWelcome();
+
