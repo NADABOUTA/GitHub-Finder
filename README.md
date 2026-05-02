@@ -24,7 +24,6 @@ Application frontend permettant de rechercher des profils GitHub, visualiser leu
 ```bash
 git clone https://github.com/votre-username/github-finder.git
 cd github-finder
-# Ouvrir index.html dans un navigateur
 ```
 
 ## Structure
